@@ -53,6 +53,6 @@ void main()
     {
         can2040_transmit(&cbus, &msg);
         printf("CAN message sent\n");
-        sleep_ms(100);
+        sleep_ms(5000);
     }
 }
