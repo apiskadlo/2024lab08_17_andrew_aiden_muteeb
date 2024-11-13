@@ -51,6 +51,7 @@ void main()
     while (1)
     {
         can2040_transmit(&cbus, &msg);
-        sleep_ms(10);
+        printf("CAN message sent\n");
+        sleep_ms(100);
     }
 }

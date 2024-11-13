@@ -2,12 +2,21 @@
 #include <hardware/regs/intctrl.h>
 #include <stdio.h>
 #include <pico/stdlib.h>
+#include "FreeRTOS.h"
+#include "queue.h"
 
 static struct can2040 cbus;
 
+QueueHandle_t queue;
+
 static void can2040_cb(struct can2040 *cd, uint32_t notify, struct can2040_msg *msg)
 {
-    // Put your code here....
+    /* Check that the IRQ was triggered by RX event */
+    if (notify == CAN2040_NOTIFY_RX)
+    {
+        printf("Message received: ");
+        xQueueSendToBackFromISR(queue, msg, pdTRUE);
+    }
 }
 
 static void PIOx_IRQHandler(void)
@@ -36,5 +45,14 @@ void canbus_setup(void)
 
 void main()
 {
-    
+    canbus_setup();
+    queue = xQueueCreate(20, sizeof(struct can2040_msg));
+    struct can2040_msg can_msg;
+
+    while (1) 
+    {
+        xQueueReceive(queue, &can_msg, portMAX_DELAY);
+        printf("CAN ID: %d\n", can_msg.id);
+        printf("Data: %#x, %#x, %#x, %#x, %#x, %#x, %#x, %#x\n", can_msg.data[0], can_msg.data[1], can_msg.data[2], can_msg.data[3], can_msg.data[4], can_msg.data[5], can_msg.data[6], can_msg.data[7]);
+    }
 }
