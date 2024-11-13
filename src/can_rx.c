@@ -45,6 +45,7 @@ void canbus_setup(void)
 
 void main()
 {
+    stdio_init_all();
     canbus_setup();
     queue = xQueueCreate(20, sizeof(struct can2040_msg));
     struct can2040_msg can_msg;

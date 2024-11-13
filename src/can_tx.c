@@ -36,6 +36,7 @@ void canbus_setup(void)
 
 void main()
 {
+    stdio_init_all();
     canbus_setup();
 
     struct can2040_msg msg;
