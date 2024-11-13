@@ -51,7 +51,7 @@ void main()
 
     while (1) 
     {
-        xQueueReceive(queue, &can_msg, portMAX_DELAY);
+        while (xQueueReceive(queue, &can_msg, portMAX_DELAY) == pdFALSE) {}
         printf("Message Received: \n");
         printf("    CAN ID: %d\n", can_msg.id);
         printf("    Data: %#x, %#x, %#x, %#x, %#x, %#x, %#x, %#x\n", can_msg.data[0], can_msg.data[1], can_msg.data[2], can_msg.data[3], can_msg.data[4], can_msg.data[5], can_msg.data[6], can_msg.data[7]);
