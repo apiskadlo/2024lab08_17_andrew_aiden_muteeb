@@ -33,3 +33,34 @@ void canbus_setup(void)
     // Start canbus
     can2040_start(&cbus, sys_clock, bitrate, gpio_rx, gpio_tx);
 }
+
+void main()
+{
+    stdio_init_all();
+    canbus_setup();
+
+    struct can2040_msg msg;
+
+    msg.id = 0x001;
+    msg.dlc = 8;
+    uint8_t buf[8] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};
+    for (int i = 0; i < 8; i++)
+    {
+        msg.data[i] = buf[i];
+    }
+
+    while (1)
+    {
+        can2040_transmit(&cbus, &msg);
+        printf("CAN message sent\n");
+        sleep_ms(10);
+        if (msg.id < 0x7FF)
+        {
+            msg.id++;
+        }
+        else
+        {
+            msg.id = 0x001;
+        }
+    }
+}
